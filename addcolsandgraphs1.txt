@@ -1,0 +1,929 @@
+Sub addcolsandgraphs1()
+
+    Application.EnableEvents = False
+    Application.Calculation = xlCalculationManual
+    Application.ScreenUpdating = False
+    Application.DisplayAlerts = False
+    Application.StatusBar = "Please wait...."
+    
+' Unhinde all columns
+
+
+' Refresh all graphs
+' Refresh All_messadaten_d graph:
+Dim file As String, lc As Integer
+file = ActiveWorkbook.name
+Workbooks(file).Activate
+Worksheets(1).Select
+lc = ActiveSheet.Range("xfd2").End(xlToLeft).Column
+lr = ActiveSheet.Range("b1048576").End(xlUp).Row
+
+ActiveSheet.Range(Cells(2, lc), Cells(2, Columns.Count)).EntireColumn.Hidden = False
+
+'Counter column
+Dim colm As Integer, i As Integer, series_name As String, coln As Integer
+ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+colm = Selection.Column
+
+'Adding all series data to Alle_Messadaten_D graph
+Dim srs As Series
+If lc > 26 Then
+    For i = 2 To 26
+        Workbooks(file).Activate
+        Worksheets(1).Select
+        series_name = ActiveSheet.Cells(2, i).Value & "_" & ActiveSheet.Cells(3, i).Value
+        ActiveSheet.ChartObjects("Diagramm 1").Activate
+        ActiveChart.FullSeriesCollection(i - 1).name = series_name
+        ActiveChart.FullSeriesCollection(i - 1).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+        ActiveChart.FullSeriesCollection(i - 1).Values = ActiveSheet.Range(Cells(4, i), Cells(lr, i))
+    Next
+Else
+    For i = 2 To lc
+        Workbooks(file).Activate
+        Worksheets(1).Select
+        series_name = ActiveSheet.Cells(2, i).Value & "_" & ActiveSheet.Cells(3, i).Value
+        ActiveSheet.ChartObjects("Diagramm 1").Activate
+        ActiveChart.FullSeriesCollection(i - 1).name = series_name
+        ActiveChart.FullSeriesCollection(i - 1).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+        ActiveChart.FullSeriesCollection(i - 1).Values = ActiveSheet.Range(Cells(4, i), Cells(lr, i))
+    Next
+End If
+
+'Modifying BattSatz1_D graph:
+check = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz1_Start*") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz1_Min_Zyklus*") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz1_Average*") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz1_MIN*") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz1_MAX*")
+If check >= 5 Then
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_Start*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 2").Activate
+    ActiveChart.FullSeriesCollection(1).name = series_name
+    ActiveChart.FullSeriesCollection(1).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(1).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_Min_Zyklus*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 2").Activate
+    ActiveChart.FullSeriesCollection(2).name = series_name
+    ActiveChart.FullSeriesCollection(2).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(2).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_Average*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 2").Activate
+    ActiveChart.FullSeriesCollection(3).name = series_name
+    ActiveChart.FullSeriesCollection(3).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(3).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    Dim chk As Integer, chk2 As Integer
+    For i = 1 To lc
+        chk = InStr(1, ActiveSheet.Cells(2, i).Value, "U_BattSatz1_Min", vbTextCompare)
+        chk2 = InStr(1, ActiveSheet.Cells(2, i).Value, "U_BattSatz1_Min_Zyklus", vbTextCompare)
+        If chk <> 0 And chk2 = 0 Then
+            coln = i
+        End If
+    Next
+        
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 2").Activate
+    ActiveChart.FullSeriesCollection(4).name = series_name
+    ActiveChart.FullSeriesCollection(4).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(4).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_Max*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 2").Activate
+    ActiveChart.FullSeriesCollection(5).name = series_name
+    ActiveChart.FullSeriesCollection(5).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(5).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+Else:
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.ChartObjects("Diagramm 2").Activate
+    ActiveChart.ChartArea.Clear
+End If
+
+''Modifying Drehzahl_d graph
+check = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Drehzahl_AVERAGE*") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Drehzahl_MIN") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Drehzahl_MAX*")
+If check >= 3 Then
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    ActiveSheet.Rows(2).Find("*Drehzahl_AVERAGE*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 4").Activate
+    ActiveChart.FullSeriesCollection(1).name = series_name
+    ActiveChart.FullSeriesCollection(1).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(1).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    ActiveSheet.Rows(2).Find("*Drehzahl_Min*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 4").Activate
+    ActiveChart.FullSeriesCollection(2).name = series_name
+    ActiveChart.FullSeriesCollection(2).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(2).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    ActiveSheet.Rows(2).Find("*Drehzahl_Max*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 4").Activate
+    ActiveChart.FullSeriesCollection(3).name = series_name
+    ActiveChart.FullSeriesCollection(3).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(3).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+Else:
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.ChartObjects("Diagramm 4").Activate
+    ActiveChart.ChartArea.Clear
+End If
+
+' Adding calculated columns
+Workbooks(file).Worksheets(1).Select
+lc = ActiveSheet.Range("xfd2").End(xlToLeft).Column + 1
+Cells(2, lc).Value = "Blindstart"
+Cells(2, lc + 1).Value = "Blindstart Nr."
+Cells(2, lc + 2).Value = "0.3%"
+Cells(2, lc + 3).Value = "Leistung"
+Cells(2, lc + 4).Value = "Spannung MEAN"
+Cells(2, lc + 5).Value = "Energie"
+Cells(2, lc + 6).Value = "Spannung MIN gesamter Zyklus"
+Cells(2, lc + 7).Value = "Battsatz1 U_MIN"
+Cells(2, lc + 8).Value = "Battsatz1 U_AVERAGE"
+Cells(2, lc + 9).Value = "Battsatz2 U_MIN"
+Cells(2, lc + 10).Value = "Battsatz2 U_AVERAGE"
+
+' Adding units row
+Cells(3, lc).Value = "-"
+Cells(3, lc + 1).Value = "-"
+Cells(3, lc + 2).Value = "-"
+Cells(3, lc + 3).Value = "W"
+Cells(3, lc + 4).Value = "V"
+Cells(3, lc + 5).Value = "Ws"
+Cells(3, lc + 6).Value = "V"
+Cells(3, lc + 7).Value = "V"
+Cells(3, lc + 8).Value = "V"
+Cells(3, lc + 9).Value = "V"
+Cells(3, lc + 10).Value = "V"
+
+lr = ActiveSheet.Range("a1048576").End(xlUp).Row
+Dim colp As Integer, colq As Integer
+
+With ActiveSheet.Range(Cells(4, lc), Cells(lr, lc))
+    coln = 0
+    ActiveSheet.Rows(2).Find("*Drehzahl_AVERAGE*").Select
+    coln = Selection.Column
+   .FormulaR1C1 = "=IF(R[0]C[" & -1 * (lc - coln) & "] <5,1,0)"
+End With
+
+ActiveSheet.Cells(4, lc + 1).Value = 0
+With ActiveSheet.Range(Cells(5, lc + 1), Cells(lr, lc + 1))
+   .FormulaR1C1 = "=IF(R[0]C[-1]=0,R[-1]C[0],R[-1]C[0]+1)"
+End With
+
+With ActiveSheet.Range(Cells(4, lc + 2), Cells(lr, lc + 2))
+    coln = 0
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    coln = Selection.Column
+   .FormulaR1C1 = "=0.003*R[0]C[" & -1 * (lc + 2 - coln) & "]"
+End With
+
+With ActiveSheet.Range(Cells(4, lc + 4), Cells(lr, lc + 4))
+    coln = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_Start*").Select
+    coln = Selection.Column
+
+    colm = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_MIN_Zyklus*").Select
+    colm = Selection.Column
+
+    colp = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_AVERAGE*").Select
+    colp = Selection.Column
+
+    colq = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz2_AVERAGE*").Select
+    colq = Selection.Column
+
+
+   .FormulaR1C1 = "=IF((R[0]C[" & -1 * (lc + 4 - coln) & "]-R[0]C[" & -1 * (lc + 4 - colm) & "])>5,R[0]C[" & -1 * (lc + 4 - colp) & "],R[0]C[" & -1 * (lc + 4 - colq) & "])"
+End With
+
+With ActiveSheet.Range(Cells(4, lc + 3), Cells(lr, lc + 3))
+    ActiveSheet.Rows(2).Find("*Stromstärke_AVERAGE*").Select
+    coln = Selection.Column
+   .FormulaR1C1 = "=R[0]C[1] * R[0]C[" & -1 * (lc + 3 - coln) & "]"
+End With
+
+
+With ActiveSheet.Range(Cells(4, lc + 5), Cells(lr, lc + 5))
+    ActiveSheet.Rows(2).Find("Leistung").Select
+    coln = Selection.Column
+    .FormulaR1C1 = "=R[0]C[" & -1 * (lc + 5 - coln) & "] * 18"
+End With
+
+With ActiveSheet.Range(Cells(4, lc + 6), Cells(lr, lc + 6))
+    coln = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_Start*").Select
+    coln = Selection.Column
+
+    colm = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_MIN_Zyklus*").Select
+    colm = Selection.Column
+
+    colq = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz2_MIN_Zyklus*").Select
+    colq = Selection.Column
+
+
+   .FormulaR1C1 = "=IF((R[0]C[" & -1 * (lc + 6 - coln) & "]-R[0]C[" & -1 * (lc + 6 - colm) & "])>5,R[0]C[" & -1 * (lc + 6 - colm) & "],R[0]C[" & -1 * (lc + 6 - colq) & "])"
+End With
+
+With ActiveSheet.Range(Cells(4, lc + 7), Cells(lr, lc + 7))
+    coln = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_Start*").Select
+    coln = Selection.Column
+
+    colm = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_MIN_Zyklus*").Select
+    colm = Selection.Column
+
+   .FormulaR1C1 = "=IF((R[0]C[" & -1 * (lc + 7 - coln) & "]-R[0]C[" & -1 * (lc + 7 - colm) & "])>5,R[0]C[" & -1 * (lc + 7 - colm) & "],"""")"
+End With
+
+
+With ActiveSheet.Range(Cells(4, lc + 8), Cells(lr, lc + 8))
+    coln = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_Start*").Select
+    coln = Selection.Column
+
+    colm = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_MIN_Zyklus*").Select
+    colm = Selection.Column
+
+    colp = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_AVERAGE*").Select
+    colp = Selection.Column
+
+
+   .FormulaR1C1 = "=IF((R[0]C[" & -1 * (lc + 8 - coln) & "]-R[0]C[" & -1 * (lc + 8 - colm) & "])>5,R[0]C[" & -1 * (lc + 8 - colp) & "],"""")"
+End With
+
+
+With ActiveSheet.Range(Cells(4, lc + 9), Cells(lr, lc + 9))
+    coln = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_Start*").Select
+    coln = Selection.Column
+
+    colm = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_MIN_Zyklus*").Select
+    colm = Selection.Column
+
+    colq = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz2_MIN_Zyklus*").Select
+    colq = Selection.Column
+
+
+   .FormulaR1C1 = "=IF((R[0]C[" & -1 * (lc + 9 - coln) & "]-R[0]C[" & -1 * (lc + 9 - colm) & "])>5,"""",R[0]C[" & -1 * (lc + 9 - colq) & "])"
+End With
+
+
+With ActiveSheet.Range(Cells(4, lc + 10), Cells(lr, lc + 10))
+    coln = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_Start*").Select
+    coln = Selection.Column
+
+    colm = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_MIN_Zyklus*").Select
+    colm = Selection.Column
+
+    colq = 0
+    ActiveSheet.Rows(2).Find("*U_BattSatz2_AVERAGE*").Select
+    colq = Selection.Column
+
+
+   .FormulaR1C1 = "=IF((R[0]C[" & -1 * (lc + 10 - coln) & "]-R[0]C[" & -1 * (lc + 10 - colm) & "])>5,"""",R[0]C[" & -1 * (lc + 10 - colq) & "])"
+End With
+
+''Modifying Energieaufnahme_d graph
+check = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Leistung*")
+If check >= 1 Then
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    
+    ActiveSheet.Rows(2).Find("*Leistung*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 7").Activate
+    ActiveChart.FullSeriesCollection(1).name = series_name
+    ActiveChart.FullSeriesCollection(1).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(1).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    ActiveSheet.Rows(2).Find("Energie").Select
+    coln = Selection.Column
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 7").Activate
+    ActiveChart.FullSeriesCollection(2).name = series_name
+    ActiveChart.FullSeriesCollection(2).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(2).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+Else:
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.ChartObjects("Diagramm 7").Activate
+    ActiveChart.ChartArea.Clear
+End If
+
+''Modifying BattSatz2_d graph
+check = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz2_Start_*") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz2_MIN_Zyklus_*") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz2_AVERAGE_*") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz2_MIN_*") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz2_MAX_*")
+If check >= 5 Then
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    
+    ActiveSheet.Rows(2).Find("*U_BattSatz2_Start_*").Select
+    coln = Selection.Column
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 3").Activate
+    ActiveChart.FullSeriesCollection(1).name = series_name
+    ActiveChart.FullSeriesCollection(1).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(1).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.Rows(2).Find("*U_BattSatz2_MIN_Zyklus_*").Select
+    coln = Selection.Column
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 3").Activate
+    ActiveChart.FullSeriesCollection(2).name = series_name
+    ActiveChart.FullSeriesCollection(2).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(2).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    ActiveSheet.Rows(2).Find("*U_BattSatz2_AVERAGE_*").Select
+    coln = Selection.Column
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 3").Activate
+    ActiveChart.FullSeriesCollection(3).name = series_name
+    ActiveChart.FullSeriesCollection(3).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(3).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    ActiveSheet.Rows(2).Find("*U_BattSatz2_MAX_*").Select
+    coln = Selection.Column
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 3").Activate
+    ActiveChart.FullSeriesCollection(4).name = series_name
+    ActiveChart.FullSeriesCollection(4).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(4).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    For i = 1 To lc
+        chk = InStr(1, ActiveSheet.Cells(2, i).Value, "U_BattSatz2_Min", vbTextCompare)
+        chk2 = InStr(1, ActiveSheet.Cells(2, i).Value, "U_BattSatz2_Min_Zyklus", vbTextCompare)
+        If chk <> 0 And chk2 = 0 Then
+            coln = i
+        End If
+    Next
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 3").Activate
+    ActiveChart.FullSeriesCollection(5).name = series_name
+    ActiveChart.FullSeriesCollection(5).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(5).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+Else:
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.ChartObjects("Diagramm 3").Activate
+    ActiveChart.ChartArea.Clear
+End If
+
+
+'' Stromstrake graph
+check = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Stromstärke_PEAK_*") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Stromstärke_AVERAGE_*") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Stromstärke_MIN_*") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Stromstärke_MAX_*")
+If check >= 4 Then
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    
+    ActiveSheet.Rows(2).Find("*Stromstärke_PEAK_*").Select
+    coln = Selection.Column
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 5").Activate
+    ActiveChart.FullSeriesCollection(1).name = series_name
+    ActiveChart.FullSeriesCollection(1).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(1).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    
+    ActiveSheet.Rows(2).Find("*Stromstärke_AVERAGE_*").Select
+    coln = Selection.Column
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 5").Activate
+    ActiveChart.FullSeriesCollection(2).name = series_name
+    ActiveChart.FullSeriesCollection(2).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(2).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    
+    ActiveSheet.Rows(2).Find("*Stromstärke_MIN_*").Select
+    coln = Selection.Column
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 5").Activate
+    ActiveChart.FullSeriesCollection(3).name = series_name
+    ActiveChart.FullSeriesCollection(3).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(3).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    
+    ActiveSheet.Rows(2).Find("*Stromstärke_MAX_*").Select
+    coln = Selection.Column
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 5").Activate
+    ActiveChart.FullSeriesCollection(4).name = series_name
+    ActiveChart.FullSeriesCollection(4).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(4).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+Else:
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.ChartObjects("Diagramm 5").Activate
+    ActiveChart.ChartArea.Clear
+End If
+
+'' Blindstart graph
+check = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Blindstart Nr*")
+If check >= 1 Then
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    
+    ActiveSheet.Rows(2).Find("*Blindstart Nr*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 9").Activate
+    ActiveChart.FullSeriesCollection(1).name = series_name
+    ActiveChart.FullSeriesCollection(1).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(1).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    ActiveSheet.Rows(2).Find("*0.3%*").Select
+    coln = Selection.Column
+    
+    ActiveSheet.Cells(2, coln).Value = CStr(ActiveSheet.Cells(2, coln).Value * 100) & "%"
+    series_name = CStr(ActiveSheet.Cells(2, coln).Value * 100) & "%"
+    ActiveSheet.ChartObjects("Diagramm 9").Activate
+    ActiveChart.FullSeriesCollection(2).name = series_name
+    ActiveChart.FullSeriesCollection(2).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(2).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+Else:
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.ChartObjects("Diagramm 9").Activate
+    ActiveChart.ChartArea.Clear
+End If
+
+
+'' Max stromaufnahme graph
+check = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Stromstärke_PEAK_*") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "Spannung MIN gesamter Zyklus")
+If check >= 2 Then
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    
+    ActiveSheet.Rows(2).Find("*Stromstärke_PEAK_*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 10").Activate
+    ActiveChart.FullSeriesCollection(1).name = series_name
+    ActiveChart.FullSeriesCollection(1).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(1).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    ActiveSheet.Rows(2).Find("Spannung MIN gesamter Zyklus").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 10").Activate
+    ActiveChart.FullSeriesCollection(2).name = series_name
+    ActiveChart.FullSeriesCollection(2).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(2).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+Else:
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.ChartObjects("Diagramm 10").Activate
+    ActiveChart.ChartArea.Clear
+End If
+
+'' BattSatz1_D graph
+check = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz1_MAX*") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "U_BattSatz1_Min")
+If check >= 2 Then
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    
+    ActiveSheet.Rows(2).Find("*U_BattSatz1_MAX*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 13").Activate
+    ActiveChart.FullSeriesCollection(1).name = series_name
+    ActiveChart.FullSeriesCollection(1).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(1).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    For i = 1 To lc
+        chk = InStr(1, ActiveSheet.Cells(2, i).Value, "U_BattSatz1_Min", vbTextCompare)
+        chk2 = InStr(1, ActiveSheet.Cells(2, i).Value, "U_BattSatz1_Min_Zyklus", vbTextCompare)
+        If chk <> 0 And chk2 = 0 Then
+            coln = i
+        End If
+    Next
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 13").Activate
+    ActiveChart.FullSeriesCollection(2).name = series_name
+    ActiveChart.FullSeriesCollection(2).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(2).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+Else:
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.ChartObjects("Diagramm 13").Activate
+    ActiveChart.ChartArea.Clear
+End If
+
+'' Drehzahl_D graph
+check = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Drehzahl_MIN_*") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Drehzahl_MAX_*")
+
+If check >= 2 Then
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    
+    ActiveSheet.Rows(2).Find("*Drehzahl_MIN_*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 15").Activate
+    ActiveChart.FullSeriesCollection(1).name = series_name
+    ActiveChart.FullSeriesCollection(1).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(1).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    ActiveSheet.Rows(2).Find("*Drehzahl_MAX_*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 15").Activate
+    ActiveChart.FullSeriesCollection(2).name = series_name
+    ActiveChart.FullSeriesCollection(2).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(2).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+Else:
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.ChartObjects("Diagramm 15").Activate
+    ActiveChart.ChartArea.Clear
+End If
+
+
+
+'' +Brush graph
+' Refresh only if the brush data is available.
+
+
+check = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*PLUS_Brush_MIN_*")
+
+If check >= 1 Then
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    
+    ActiveSheet.Rows(2).Find("*PLUS_Brush_MIN_*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 6").Activate
+    ActiveChart.FullSeriesCollection(1).name = series_name
+    ActiveChart.FullSeriesCollection(1).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(1).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    
+    ActiveSheet.Rows(2).Find("*PLUS_Brush_MAX_*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 6").Activate
+    ActiveChart.FullSeriesCollection(2).name = series_name
+    ActiveChart.FullSeriesCollection(2).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(2).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+Else:
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.ChartObjects("Diagramm 6").Activate
+    ActiveChart.ChartArea.Clear
+    
+End If
+
+'' Bus bar 1 d graph
+
+check = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Bus Bar 1_MIN_*")
+
+If check >= 1 Then
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    
+    ActiveSheet.Rows(2).Find("*Bus Bar 1_MIN_*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 8").Activate
+    ActiveChart.FullSeriesCollection(1).name = series_name
+    ActiveChart.FullSeriesCollection(1).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(1).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    
+    ActiveSheet.Rows(2).Find("*Bus Bar 1_MAX_*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 8").Activate
+    ActiveChart.FullSeriesCollection(2).name = series_name
+    ActiveChart.FullSeriesCollection(2).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(2).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+Else:
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.ChartObjects("Diagramm 8").Activate
+    ActiveChart.ChartArea.Clear
+End If
+
+
+'' BattSatz2_D graph
+check = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz2_MAX*") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz2_MIN*")
+
+If check >= 2 Then
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    
+    ActiveSheet.Rows(2).Find("*U_BattSatz2_MAX*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 14").Activate
+    ActiveChart.FullSeriesCollection(1).name = series_name
+    ActiveChart.FullSeriesCollection(1).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(1).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    For i = 1 To lc
+        chk = InStr(1, ActiveSheet.Cells(2, i).Value, "U_BattSatz2_Min", vbTextCompare)
+        chk2 = InStr(1, ActiveSheet.Cells(2, i).Value, "U_BattSatz2_Min_Zyklus", vbTextCompare)
+        If chk <> 0 And chk2 = 0 Then
+            coln = i
+        End If
+    Next
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 14").Activate
+    ActiveChart.FullSeriesCollection(2).name = series_name
+    ActiveChart.FullSeriesCollection(2).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(2).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+Else:
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.ChartObjects("Diagramm 14").Activate
+    ActiveChart.ChartArea.Clear
+End If
+
+'' Stromstrake_D graph
+check = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Stromstärke_MIN_*") + Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Stromstärke_MAX_*")
+
+If check >= 2 Then
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    
+    ActiveSheet.Rows(2).Find("*Stromstärke_MIN_*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 16").Activate
+    ActiveChart.FullSeriesCollection(1).name = series_name
+    ActiveChart.FullSeriesCollection(1).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(1).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    ActiveSheet.Rows(2).Find("*Stromstärke_MAX_*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 16").Activate
+    ActiveChart.FullSeriesCollection(2).name = series_name
+    ActiveChart.FullSeriesCollection(2).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(2).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+Else:
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.ChartObjects("Diagramm 16").Activate
+    ActiveChart.ChartArea.Clear
+End If
+
+'' Pole house_D graph
+check = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Pole House_MIN_*")
+
+If check >= 1 Then
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    
+    ActiveSheet.Rows(2).Find("*Pole House_MIN_*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 12").Activate
+    ActiveChart.FullSeriesCollection(1).name = series_name
+    ActiveChart.FullSeriesCollection(1).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(1).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    ActiveSheet.Rows(2).Find("*Pole House_MAX_*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 12").Activate
+    ActiveChart.FullSeriesCollection(2).name = series_name
+    ActiveChart.FullSeriesCollection(2).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(2).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+Else:
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.ChartObjects("Diagramm 12").Activate
+    ActiveChart.ChartArea.Clear
+End If
+
+'' bus_bar graph
+check = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Bus Bar_MIN_*")
+If check >= 1 Then
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.Rows(2).Find("*Counter_Kl50_AVE*").Select
+    colm = Selection.Column
+    
+    ActiveSheet.Rows(2).Find("*Bus Bar_MIN_*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 11").Activate
+    ActiveChart.FullSeriesCollection(1).name = series_name
+    ActiveChart.FullSeriesCollection(1).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(1).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+    
+    ActiveSheet.Rows(2).Find("*Bus Bar_MAX_*").Select
+    coln = Selection.Column
+    
+    series_name = ActiveSheet.Cells(2, coln).Value & "_" & ActiveSheet.Cells(3, coln).Value
+    ActiveSheet.ChartObjects("Diagramm 11").Activate
+    ActiveChart.FullSeriesCollection(2).name = series_name
+    ActiveChart.FullSeriesCollection(2).XValues = ActiveSheet.Range(Cells(4, colm), Cells(lr, colm))
+    ActiveChart.FullSeriesCollection(2).Values = ActiveSheet.Range(Cells(4, coln), Cells(lr, coln))
+Else:
+    Workbooks(file).Worksheets(1).Select
+    ActiveSheet.ChartObjects("Diagramm 11").Activate
+    ActiveChart.ChartArea.Clear
+End If
+
+'
+Workbooks(file).Worksheets("Data1").Rows(2).Font.Bold = True
+Workbooks(file).Worksheets("Data1").Rows(3).Font.Bold = True
+
+Workbooks(file).Worksheets(1).Select
+lc = ActiveSheet.Range("xfd2").End(xlToLeft).Column
+
+Workbooks(file).Worksheets(1).Range("a2", Cells(3, lc)).Interior.Color = 49407
+
+
+'
+'ResetSettings:
+  'Reset Macro Optimization Settings
+    Application.EnableEvents = True
+    Application.Calculation = xlCalculationAutomatic
+    Application.ScreenUpdating = True
+    Application.DisplayAlerts = True
+
+'Centre the data and draw borders
+Workbooks(file).Activate
+Workbooks(file).Worksheets(1).Select
+lc = ActiveSheet.Range("xfd2").End(xlToLeft).Column
+Worksheets(1).Range("a2", Cells(ActiveSheet.Range("a1048576").End(xlUp).Row, lc)).Select
+Selection.VerticalAlignment = xlCenter
+Selection.HorizontalAlignment = xlCenter
+
+    Selection.Borders(xlDiagonalDown).LineStyle = xlNone
+    Selection.Borders(xlDiagonalUp).LineStyle = xlNone
+    With Selection.Borders(xlEdgeLeft)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlEdgeTop)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlEdgeBottom)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlEdgeRight)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlInsideVertical)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlInsideHorizontal)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+
+
+
+'Borders and alignment for sheet2
+Workbooks(file).Worksheets(2).Select
+ActiveSheet.Range("a2", Cells(ActiveSheet.Range("a1048576").End(xlUp).Row, lc)).Select
+Selection.VerticalAlignment = xlCenter
+Selection.HorizontalAlignment = xlCenter
+
+    Selection.Borders(xlDiagonalDown).LineStyle = xlNone
+    Selection.Borders(xlDiagonalUp).LineStyle = xlNone
+    With Selection.Borders(xlEdgeLeft)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlEdgeTop)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlEdgeBottom)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlEdgeRight)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlInsideVertical)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlInsideHorizontal)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    
+
+Workbooks(file).Worksheets(1).Select
+
+
+'Message Box when tasks are completed
+  MsgBox "Task Complete!"
+
+    Application.EnableEvents = True
+    Application.Calculation = xlCalculationAutomatic
+    Application.ScreenUpdating = True
+    Application.DisplayAlerts = True
+    Application.StatusBar = "Done"
+
+Workbooks(file).Worksheets(1).Range(Cells(2, lc), Cells(2, Columns.Count)).EntireColumn.Hidden = True
+Workbooks(file).Worksheets(1).Rows(2).WrapText = True
+
+ActiveSheet.Range(Cells(2, lc + 1), Cells(2, Columns.Count)).EntireColumn.Hidden = True
+Workbooks(file).Worksheets(1).Rows(2).RowHeight = 28
+End Sub

@@ -1,0 +1,68 @@
+Sub checkcolheaders()
+
+Dim a(18) As Boolean, file As String, lc As Integer, i As Integer
+
+file = ActiveWorkbook.name
+Workbooks(file).Activate
+Worksheets(1).Select
+
+lc = ActiveSheet.Range("xfd2").End(xlToLeft).Column
+
+a(1) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Drehzahl_AVERAGE*")
+a(15) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Drehzahl_MIN*")
+a(16) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Drehzahl_MAX*")
+a(2) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Counter_Kl50_AVE*")
+a(3) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz1_Start*")
+a(4) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz1_MIN_Zyklus*")
+a(10) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz1_MIN*")
+a(11) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz1_MAX*")
+a(5) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz1_AVERAGE*")
+a(9) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz2_Start*")
+a(6) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz2_MIN_Zyklus*")
+a(18) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz2_MIN*")
+a(8) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz2_MAX*")
+a(17) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*U_BattSatz2_AVERAGE*")
+a(7) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Stromstärke_AVERAGE*")
+a(12) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Stromstärke_PEAK*")
+a(13) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Stromstärke_MIN*")
+a(14) = Application.WorksheetFunction.CountIf(ActiveSheet.Rows(2), "*Stromstärke_MAX*")
+
+
+For i = 1 To 18
+    If a(i) = 0 Then
+        If i = 1 Then
+            VBA.MsgBox ("Column Drehzahl_AVERAGE is missing")
+            Exit Sub
+        ElseIf i = 2 Then
+            VBA.MsgBox ("Column Counter_Kl50_AVE is missing")
+            Exit Sub
+        ElseIf i = 3 Then
+            VBA.MsgBox ("Column U_BattSatz1_Start is missing")
+            Exit Sub
+        ElseIf i = 4 Then
+            VBA.MsgBox ("Column U_BattSatz1_MIN_Zyklus is missing")
+            Exit Sub
+        ElseIf i = 5 Then
+            VBA.MsgBox ("Column U_BattSatz1_AVERAGE is missing")
+            Exit Sub
+        ElseIf i = 6 Then
+            VBA.MsgBox ("Column U_BattSatz2_AVERAGE is missing")
+            Exit Sub
+        ElseIf i = 7 Then
+            VBA.MsgBox ("Column Stromstärke_AVERAGE is missing")
+            Exit Sub
+        ElseIf i = 8 Then
+            VBA.MsgBox ("Column U_BattSatz2_MIN_Zyklus is missing")
+            Exit Sub
+        ElseIf i = 9 Then
+            VBA.MsgBox ("Column U_BattSatz2_Start is missing")
+            Exit Sub
+        End If
+    End If
+Next
+
+VBA.MsgBox ("All required columns are in place. Please go ahead for Step 3")
+
+End Sub
+
+

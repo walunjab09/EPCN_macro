@@ -1,0 +1,281 @@
+Sub combinefiles()
+
+Dim a As Long, lc As Long, lr As Long, b As Long, file As String, c As Long, d As Long, name As String, start_cyc As Long, end_cyc As Long, e As Long, f As Long, h As Long
+
+' Clear the old data
+file = ActiveWorkbook.name
+Workbooks(file).Worksheets(1).Activate
+lc = ActiveSheet.Range("xfd2").End(xlToLeft).Column
+lr = ActiveSheet.Range("a1048576").End(xlUp).Row
+ActiveSheet.Range("a2", Cells(lr, lc)).Select
+Selection.Clear
+
+
+Workbooks(file).Worksheets(2).Activate
+If WorksheetFunction.CountA(Workbooks(file).Worksheets(2).Range("a:a")) > 1 Then
+a = Workbooks(file).Worksheets(2).Range("a1048576").End(xlUp).Row
+ActiveSheet.Range("a2", "d" & a).Select
+Selection.Clear
+End If
+
+' Loop through all the files in the folder
+Dim wb As Workbook
+Dim myPath As String
+Dim myFile As String
+Dim myExtension As String
+Dim FldrPicker As FileDialog
+
+'Optimize Macro Speed
+  Application.ScreenUpdating = False
+  Application.EnableEvents = False
+  Application.Calculation = xlCalculationManual
+  Application.DisplayAlerts = False
+
+'Retrieve Target Folder Path From User
+  Set FldrPicker = Application.FileDialog(msoFileDialogFolderPicker)
+
+    With FldrPicker
+      .Title = "Select A Target Folder"
+      .AllowMultiSelect = False
+        If .Show <> -1 Then GoTo NextCode
+        myPath = .SelectedItems(1) & "\"
+    End With
+
+'In Case of Cancel
+NextCode:
+  myPath = myPath
+  If myPath = "" Then GoTo ResetSettings
+
+'Target File Extension (must include wildcard "*")
+  myExtension = "*.xlsx"
+
+'Target Path with Ending Extention
+  myFile = Dir(myPath & myExtension)
+
+'Loop through each Excel file in folder
+Dim cnt As Long
+cnt = 0
+  Do While myFile <> ""
+    'Set variable equal to opened workbook
+      Set wb = Workbooks.Open(Filename:=myPath & myFile)
+      cnt = cnt + 1
+
+    'Ensure Workbook has opened before moving on to next line of code
+      DoEvents
+
+    'Process after opening a file
+      wb.Activate
+      wb.Sheets("Data1").Select
+      
+      If wb.Sheets("Data1").Range("b1048576").End(xlUp).Row >= 3 Then
+
+      'Some cycles have first cycle as 0 and counter shows correct value in second cycle. Taking start_cyc accordingly.
+      end_cyc = wb.Worksheets("Data1").Range("b1048576").End(xlUp).Value
+      b = wb.Worksheets("Data1").Range("b1048576").End(xlUp).Row
+
+      Dim i As Long
+
+      ' Find out first non zero counter row in the export file
+      For f = 3 To b
+        If wb.Worksheets("Data1").Range("b" & f).Value > 0 Then
+            start_cyc = wb.Worksheets("Data1").Range("b" & f).Value
+            i = wb.Worksheets("Data1").Range("b" & f).Row
+            Exit For
+        End If
+      Next f
+
+'      If wb.Worksheets("Data1").Range("b3").Value > 0 Then
+'         start_cyc = wb.Worksheets("Data1").Range("b3").Value
+'      Else
+'         start_cyc = wb.Worksheets("Data1").Range("b4").Value
+'      End If
+
+
+
+      'b = WorksheetFunction.CountA(wb.Worksheets(1).Range("b:b"))
+      'b = wb.Worksheets("Data1").Range("b1048576").End(xlUp).Row
+      e = wb.Worksheets("Data1").Range("xfd1").End(xlToLeft).Column
+      wb.Worksheets("Data1").Select
+
+      If cnt = 1 Then
+        wb.Worksheets("Data1").Range("b" & i - 2, Cells(b, e)).Select
+      Else
+        wb.Worksheets("Data1").Range("b" & i, Cells(b, e)).Select
+      End If
+
+      Selection.Copy
+
+      Workbooks(file).Activate
+      Workbooks(file).Worksheets(1).Select
+
+      'Check if the number of columns match with the excel export:
+      Dim ncols As Long, data_cols As Long, add_cols As Long
+
+      If cnt = 1 Then
+        c = 2
+      Else
+        c = Workbooks(file).Worksheets(1).Range("b1048576").End(xlUp).Row + 1
+      End If
+
+      ActiveSheet.Range("a" & c).Select
+      ActiveSheet.Paste
+
+      Workbooks(file).Worksheets(2).Select
+      d = Workbooks(file).Worksheets(2).Range("b1048576").End(xlUp).Row + 1
+
+      If d = 2 Then
+        Workbooks(file).Worksheets(2).Range("a" & d).Value = 1
+      Else
+        Workbooks(file).Worksheets(2).Range("a" & d).Value = ActiveWorkbook.Worksheets(2).Range("a" & d - 1).Value + 1
+      End If
+
+      name = wb.name
+      name = Replace(name, ".xlsx", "")
+
+      Workbooks(file).Worksheets(2).Range("b" & d).Value = name
+
+      Workbooks(file).Worksheets(2).Range("c" & d).Value = start_cyc
+      Workbooks(file).Worksheets(2).Range("d" & d).Value = end_cyc
+    End If
+
+    'Save and Close Workbook
+      wb.Close SaveChanges:=True
+
+    'Ensure Workbook has closed before moving on to next line of code
+      DoEvents
+
+    'Get next file name
+      myFile = Dir
+  Loop
+
+
+'Adding average value of each column in the column header
+Workbooks(file).Activate
+Sheets("Data1").Select
+
+'c = ActiveSheet.Rows(2).Find("Blindstart").Column
+c = ActiveSheet.Range("xfd2").End(xlToLeft).Column
+lr = ActiveSheet.Range("b1048576").End(xlUp).Row
+
+For i = 2 To c
+    a = Application.WorksheetFunction.Average(ActiveSheet.Range(Cells(4, i), Cells(lr, i)))
+    If IsError(ActiveSheet.Cells(2, i).Value) = True Then
+        ActiveSheet.Cells(2, i).Value = "Unknown_" & a
+    Else
+        ActiveSheet.Cells(2, i).Value = ActiveSheet.Cells(2, i).Value & "_" & a
+    End If
+Next i
+
+'Centre the data and draw borders
+Workbooks(file).Activate
+Workbooks(file).Worksheets(1).Select
+lc = ActiveSheet.Range("xfd2").End(xlToLeft).Column
+Worksheets(1).Range("a4", Cells(ActiveSheet.Range("a1048576").End(xlUp).Row, lc)).Select
+Selection.VerticalAlignment = xlCenter
+Selection.HorizontalAlignment = xlCenter
+
+    Selection.Borders(xlDiagonalDown).LineStyle = xlNone
+    Selection.Borders(xlDiagonalUp).LineStyle = xlNone
+    With Selection.Borders(xlEdgeLeft)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlEdgeTop)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlEdgeBottom)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlEdgeRight)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlInsideVertical)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlInsideHorizontal)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+
+
+
+'Borders and alignment for sheet2
+Workbooks(file).Worksheets(2).Select
+ActiveSheet.Range("a2", "d" & ActiveSheet.Range("a1048576").End(xlUp).Row).Select
+Selection.VerticalAlignment = xlCenter
+Selection.HorizontalAlignment = xlCenter
+
+    Selection.Borders(xlDiagonalDown).LineStyle = xlNone
+    Selection.Borders(xlDiagonalUp).LineStyle = xlNone
+    With Selection.Borders(xlEdgeLeft)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlEdgeTop)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlEdgeBottom)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlEdgeRight)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlInsideVertical)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+    With Selection.Borders(xlInsideHorizontal)
+        .LineStyle = xlContinuous
+        .ColorIndex = 0
+        .TintAndShade = 0
+        .Weight = xlThin
+    End With
+
+ResetSettings:
+  'Reset Macro Optimization Settings
+    Application.EnableEvents = True
+    Application.Calculation = xlCalculationAutomatic
+    Application.ScreenUpdating = True
+    Application.DisplayAlerts = True
+
+Workbooks(file).Worksheets(1).Select
+Workbooks(file).Worksheets(1).Rows(1).WrapText = True
+Workbooks(file).Worksheets(1).Rows(2).RowHeight = 28
+Workbooks(file).Worksheets(1).Rows(2).WrapText = True
+
+
+VBA.MsgBox ("Step 1 is done")
+
+End Sub
+
+
+
